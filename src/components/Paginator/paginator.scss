@@ -1,0 +1,32 @@
+.paginator {
+  --w-dimension: 40px;
+  --h-dimension: 30px;
+  &__container {
+    display: flex;
+    align-items: center;
+
+    &--vertical {
+      flex-direction: column;
+      --p-horizon-dimension: var(--h-dimension);
+      --p-horizon-dimension: var(--w-dimension);
+    }
+    &--horizon {
+      --p-horizon-dimension: var(--w-dimension);
+      --p-horizon-dimension: var(--h-dimension);
+    }
+  }
+  &__btn {
+    border: 1px solid var(--table-header-border-color);
+    border-radius: 4px;
+    background-color: var(--active-bg-color);
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    color: var(--table-header-color);
+  }
+  &__current {
+    min-width: 50px;
+    text-align: center;
+    color: var(--table-header-color);
+  }
+}

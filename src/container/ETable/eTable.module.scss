@@ -1,0 +1,30 @@
+.container {
+  width: 100%;
+  display: grid;
+  gap: 5px;
+  grid-template-areas: "ce ce ce" "vr ac il" "vr tb tb";
+  grid-template-columns: 30px 30px 1fr;
+  grid-template-rows: repeat(3, minmax(30px auto));
+}
+
+.horizon {
+  grid-area: ce;
+  padding-left: 35px;
+}
+.vertical {
+  grid-area: vr;
+}
+.inputLine {
+  grid-area: il;
+  padding-left: 5px;
+}
+.activeCell {
+  grid-area: ac;
+  text-align: center;
+}
+.table {
+  grid-area: tb;
+  &:focus {
+    outline: none; //TODO: set outline on focus
+  }
+}
