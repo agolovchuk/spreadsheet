@@ -8,14 +8,14 @@ interface Props<T> {
   columns: ReadonlyArray<TableBodyColumn<T>>;
 }
 
-const RowItem = <T extends Comparable<T>>({
+export const RowItem = <T extends Comparable<T>>({
   index,
   columns,
   data,
 }: Props<T>) => {
   return (
     <tr key={index} className="table-body__row">
-      {columns.map((e) => e.getElement(data))}
+      {columns.map((e, ci) => e.getElement(data, index, ci))}
     </tr>
   );
 };

@@ -2,6 +2,7 @@ import { useState, useCallback, KeyboardEventHandler } from "react";
 import { KeyName } from "../constants";
 
 type Dimension = [number, number];
+type Key = string | number;
 
 export const useKeyControl = (max: Dimension) => {
   const [active, setActive] = useState<Dimension>();
@@ -29,8 +30,15 @@ export const useKeyControl = (max: Dimension) => {
     },
     [max]
   );
+  const isActive = useCallback(
+    (row: Key, col: Key) =>
+      Boolean(active && col === active[0] && row === active[1]),
+    [active]
+  );
+
   return {
     active,
+    isActive,
     setActive,
     handleKeydown,
   };

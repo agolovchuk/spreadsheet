@@ -7,15 +7,17 @@ export interface TableHeaderColumn extends TableColumnBase {
   width: number;
 }
 
+export type TKey = string | number;
+
 export interface TableBodyColumn<T> extends TableColumnBase {
-  getElement: (data: T) => ReactNode;
+  getElement: (data: T, ri: TKey, ci: TKey) => ReactNode;
 }
 
 interface TableColumnBase {
-  getKey: () => string | number;
+  getKey: () => TKey;
 }
 
-export type CreateRow = <R>(row: R, index: number) => ReactNode;
+export type CreateRow<R> = (row: R, index: number) => ReactNode;
 
 export type CreateCell = <R>(
   row: R,
