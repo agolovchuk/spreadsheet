@@ -8,12 +8,27 @@
     color: var(--table-header-color);
     background-color: var(--table-header-background-color);
     &__cell {
+      padding: 0;
+      height: 30px;
       border-top: 2px solid var(--table-header-border-color);
       border-bottom: 2px solid var(--table-header-border-color);
       border-right: 1px solid var(--table-header-border-color);
       &:first-child {
         border-left: 1px solid var(--table-header-border-color);
       }
+    }
+    &__cell-wrapper {
+      height: 100%;
+      position: relative;
+    }
+    &__control {
+      width: 10px;
+      height: 100%;
+      position: absolute;
+      right: -5px;
+      z-index: 1;
+      top: 0px;
+      cursor: col-resize;
     }
   }
   &-body {

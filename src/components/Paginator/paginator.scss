@@ -25,7 +25,8 @@
     color: var(--table-header-color);
   }
   &__current {
-    min-width: 50px;
+    width: 30px;
+    height: 30px;
     text-align: center;
     color: var(--table-header-color);
   }
