@@ -1,26 +1,22 @@
-import { FC, memo, MouseEventHandler } from "react";
+import { FC, memo, MouseEventHandler, ReactNode } from "react";
 import cn from "classnames";
-import { TKey } from "@/components/Table";
 
 interface Props {
   onSelect: MouseEventHandler;
   isActive: boolean;
-  getKey: () => TKey;
-  row: TKey;
-  col: TKey;
+  children?: ReactNode;
 }
 
-const Cell: FC<Props> = ({ getKey, onSelect, isActive, row, col }) => {
+const Cell: FC<Props> = ({ onSelect, isActive, children }) => {
   return (
     <td
-      key={getKey()}
-      data-row={row}
-      data-col={col}
       className={cn("table-body__cell", {
         "table-body__cell--active": isActive,
       })}
       onClick={onSelect}
-    ></td>
+    >
+      {children}
+    </td>
   );
 };
 

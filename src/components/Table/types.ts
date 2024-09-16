@@ -8,9 +8,9 @@ export interface TableHeaderColumn extends TableColumnBase {
 }
 
 export type TKey = string | number;
-
+export type GetElement<T> = (data: T, d: [number, number]) => ReactNode;
 export interface TableBodyColumn<T> extends TableColumnBase {
-  getElement: (data: T, ri: TKey, ci: TKey) => ReactNode;
+  getElement: GetElement<T>;
 }
 
 interface TableColumnBase {

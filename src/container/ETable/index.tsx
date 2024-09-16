@@ -1,5 +1,7 @@
-import { MouseEventHandler, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import pick from "lodash/fp/pick";
+import update from "lodash/fp/update";
+
 import {
   InputLine,
   Table,
@@ -7,106 +9,66 @@ import {
   Paginator,
   createRange,
   CreateRow,
-  TKey,
 } from "@/components";
-import { toNumber } from "@/lib/helpers";
-import {
-  useKeyControl,
-  getCellName,
-  createColumnName,
-  FIRST_COLUMN,
-  FIRST_ROW,
-} from "@/lib/table";
-import { Row } from "./helpers";
+import { useKeyControl } from "./useKeycontrol";
+import { FIRST_COLUMN, FIRST_ROW } from "./constants";
+import { columnFactory, createColumnName, getCellName } from "./helpers";
 import { RowItem } from "./RowItem";
+import { Row } from "./RowData";
 import Cell from "./Cell";
 
 import type { DataRow } from "./types";
 import styles from "./eTable.module.scss";
-// TableColumn<T>
-// : () => <td key={name} className={cn("table-body__cell")}></td>
-
-// function createColumn<T>(getElement: (data: T) => ReactNode) {
-//   return (name: string): TableColumn<T> => {
-//     const getName = () => name;
-//     return {
-//       getTitle: getName,
-//       getKey: getName,
-//       getElement,
-//       width: 150,
-//     };
-//   };
-// }
-
-// const createColumnFactory = (i: number) =>
-//   compose(createColumn, createColumnName)(i);
-
-const getIndexFactory = (el: Element) => (attr: string) =>
-  toNumber(el.getAttribute(attr));
 
 function ETable() {
   const [columnLast, setColumn] = useState<number>(FIRST_COLUMN);
-  const [rowLast, setRow] = useState<number>(FIRST_ROW);
-
-  const { handleKeydown, setActive, active, isActive } = useKeyControl([
-    columnLast - FIRST_COLUMN,
-    rowLast - FIRST_ROW,
+  const [data, setData] = useState<ReadonlyArray<Row<DataRow>>>([
+    new Row({ index: 0 }),
   ]);
 
-  const handleSelect = useCallback<MouseEventHandler<HTMLTableCellElement>>(
-    ({ currentTarget }) => {
-      const getIndex = getIndexFactory(currentTarget);
-      setActive([getIndex("data-col"), getIndex("data-row")]);
+  const changeRowCount = useCallback(
+    (counter: number) => {
+      if (counter > data.length) {
+        setData((d) => d.concat(new Row({ index: counter })));
+      } else {
+        setData((d) => d.slice(0, -1));
+      }
     },
-    [setActive]
+    [data.length]
+  );
+
+  const updateData = useCallback(
+    ([row, col]: [number, number], value: string) => {
+      setData((d) => update(row)((e: Row<DataRow>) => e.set(col, value))(d));
+    },
+    []
+  );
+
+  const {
+    handleKeydown,
+    setActive,
+    active,
+    isActive,
+    currentValue,
+    setCurrentValue,
+  } = useKeyControl(
+    [data.length - FIRST_ROW, columnLast - FIRST_COLUMN],
+    updateData
   );
 
   const getElement = useCallback(
-    (data: Row<DataRow>, rKey: TKey, cKey: TKey) => (
-      <Cell
-        key={cKey}
-        isActive={isActive(rKey, cKey)}
-        row={rKey}
-        col={cKey}
-        onSelect={handleSelect}
-        getKey={() => data.hash}
-      />
+    (data: Row<DataRow>, d: [number, number]) => (
+      <Cell key={d[1]} isActive={isActive(d)} onSelect={() => setActive(d)}>
+        {data.get(d[1])}
+      </Cell>
     ),
-    [handleSelect, isActive]
+    [isActive, setActive]
   );
 
   const columns = useMemo<TableColumn<Row<DataRow>>[]>(
-    () =>
-      createRange(FIRST_COLUMN, columnLast).map((e) => ({
-        getTitle: () => createColumnName(e),
-        getKey: () => createColumnName(e),
-        getElement,
-        width: 150,
-      })),
+    () => createRange(FIRST_COLUMN, columnLast).map(columnFactory(getElement)),
     [columnLast, getElement]
   );
-
-  const data = useMemo<ReadonlyArray<Row<DataRow>>>(
-    () => createRange(FIRST_ROW, rowLast).map((index) => new Row({ index })),
-    [rowLast]
-  );
-
-  // const createColumn = useCallback<CreateCell>(
-  //   (_, ri) => (c, ci) =>
-  //     (
-  //       <td
-  //         key={c.getKey()}
-  //         data-row={ri}
-  //         data-col={ci}
-  //         className={cn("table-body__cell", {
-  //           "table-body__cell--active":
-  //             active && ci === active[0] && ri === active[1],
-  //         })}
-  //         onClick={handleSelect}
-  //       ></td>
-  //     ),
-  //   [active, handleSelect]
-  // );
 
   const bodyColumn = useMemo(
     () => columns.map(pick(["getKey", "getElement"])),
@@ -114,7 +76,9 @@ function ETable() {
   );
 
   const createRow = useCallback<CreateRow<Row<DataRow>>>(
-    (row, index) => <RowItem columns={bodyColumn} data={row} index={index} />,
+    (row, index) => (
+      <RowItem key={row.hash} columns={bodyColumn} data={row} index={index} />
+    ),
     [bodyColumn]
   );
 
@@ -127,14 +91,18 @@ function ETable() {
         className={styles.horizon}
       />
       <Paginator
-        current={rowLast}
-        onChange={setRow}
+        current={data.length}
+        onChange={changeRowCount}
         getElement={(i) => i.toString()}
         direction="vertical"
         className={styles.vertical}
       />
       <div className={styles.activeCell}>{getCellName(active)}</div>
-      <InputLine className={styles.inputLine} />
+      <InputLine
+        className={styles.inputLine}
+        value={currentValue}
+        onChange={setCurrentValue}
+      />
       <div
         tabIndex={1}
         className={styles.table}

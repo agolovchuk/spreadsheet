@@ -22,4 +22,6 @@ export enum KeyName {
   ArrowDown = "ArrowDown",
   ArrowLeft = "ArrowLeft",
   ArrowRight = "ArrowRight",
+  Enter = "Enter",
+  Backspace = "Backspace",
 }
