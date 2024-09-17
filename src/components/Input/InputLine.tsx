@@ -5,7 +5,7 @@ import "./input-line.scss";
 
 interface Props {
   className?: string;
-  value?: string;
+  value?: string | number;
   onChange?: (value: string) => void;
 }
 
@@ -21,7 +21,7 @@ const InputLine: FC<Props> = ({
     [onChange]
   );
 
-  const result = useMemo(() => calculate(value), [value]);
+  const result = useMemo(() => calculate(value.toString()), [value]);
 
   return (
     <div className={cn("input-line__container", className)}>

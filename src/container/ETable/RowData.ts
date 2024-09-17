@@ -51,9 +51,9 @@ export class Row<T extends RowData> implements Comparable<Row<T>> {
     return this;
   }
 
-  get(key: keyof T, def?: RowValue): RowValue | undefined {
+  get<D>(key: keyof T, def?: D): RowValue | D {
     const v = this.row[key];
-    if (typeof v === "undefined") return def;
+    if (typeof v === "undefined" && def) return def;
     return v;
   }
 

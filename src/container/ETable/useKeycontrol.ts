@@ -4,6 +4,7 @@ import { KeyName } from "@/lib/constants";
 type Dimension = [number, number];
 enum KeyControlMode {
   normal = "normal",
+  edit = "edit",
 }
 
 /**
@@ -12,21 +13,24 @@ enum KeyControlMode {
  * @returns
  */
 export const useKeyControl = (
-  max: Dimension,
+  [maxRow, maxColumn]: Dimension,
   updateData: (address: Dimension, value: string) => void
 ) => {
   const [active, setActive] = useState<Dimension>([0, 0]);
-  const [value, setValue] = useState<string>("");
-  const [mode] = useState<KeyControlMode>(KeyControlMode.normal);
+  const [mode, setMode] = useState<KeyControlMode>(KeyControlMode.normal);
+
+  const goDown = useCallback(
+    () => setActive((a) => a && [Math.min(a[0] + 1, maxRow), a[1]]),
+    [maxRow]
+  );
 
   const handleKeydown = useCallback<KeyboardEventHandler<HTMLDivElement>>(
     (event) => {
       event.preventDefault();
       if (KeyControlMode.normal === mode) {
-        const [maxRow, maxColumn] = max;
         switch (event.code) {
           case KeyName.ArrowDown:
-            setActive((a) => a && [Math.min(a[0] + 1, maxRow), a[1]]);
+            goDown();
             break;
           case KeyName.ArrowLeft:
             setActive((a) => a && [a[0], Math.max(a[1] - 1, 0)]);
@@ -44,13 +48,20 @@ export const useKeyControl = (
             // TODO: Remove prev char
             break;
           default:
-            setValue((c) => c + event.key);
             updateData(active, event.key);
+            setMode(KeyControlMode.edit);
+            break;
+        }
+      } else if (KeyControlMode.edit === mode) {
+        switch (event.code) {
+          case KeyName.Enter:
+            // case KeyName.Esc
+            goDown();
             break;
         }
       }
     },
-    [active, max, mode, updateData]
+    [active, goDown, maxColumn, mode, updateData]
   );
 
   const setActiveHandler = useCallback<(a: Dimension) => void>((a) => {
@@ -68,7 +79,6 @@ export const useKeyControl = (
     isActive,
     setActive: setActiveHandler,
     handleKeydown,
-    currentValue: value,
-    setCurrentValue: setValue,
+    mode,
   };
 };

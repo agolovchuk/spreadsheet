@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import pick from "lodash/fp/pick";
 import update from "lodash/fp/update";
-
 import {
   InputLine,
   Table,
@@ -44,16 +43,14 @@ function ETable() {
     []
   );
 
-  const {
-    handleKeydown,
-    setActive,
-    active,
-    isActive,
-    currentValue,
-    setCurrentValue,
-  } = useKeyControl(
+  const { handleKeydown, setActive, active, isActive } = useKeyControl(
     [data.length - FIRST_ROW, columnLast - FIRST_COLUMN],
     updateData
+  );
+
+  const currentValue = useMemo<string | undefined | number>(
+    () => data[active[0]].get(active[1]),
+    [active, data]
   );
 
   const getElement = useCallback(
@@ -101,7 +98,7 @@ function ETable() {
       <InputLine
         className={styles.inputLine}
         value={currentValue}
-        onChange={setCurrentValue}
+        onChange={(v) => updateData(active, v)}
       />
       <div
         tabIndex={1}
