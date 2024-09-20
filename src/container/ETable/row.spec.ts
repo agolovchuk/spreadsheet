@@ -1,4 +1,4 @@
-import { Row } from "./helpers";
+import { Row } from "./RowData";
 
 describe("Row structure", () => {
   test("Should compare same rows", () => {
