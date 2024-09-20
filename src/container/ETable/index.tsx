@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
+import cn from "classnames";
 import pick from "lodash/fp/pick";
 import update from "lodash/fp/update";
 import {
@@ -20,7 +21,11 @@ import Cell from "./Cell";
 import type { DataRow } from "./types";
 import styles from "./eTable.module.scss";
 
-function ETable() {
+interface Props {
+  className?: string;
+}
+
+function ETable({ className }: Props) {
   const tableRef = useRef<HTMLDivElement>(null);
   const [columnLast, setColumn] = useState<number>(FIRST_COLUMN);
 
@@ -88,7 +93,7 @@ function ETable() {
   );
 
   return (
-    <section className={styles.container}>
+    <section className={cn(styles.container, className)}>
       <Paginator
         current={columnLast}
         onChange={setColumn}
