@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import pick from "lodash/fp/pick";
 import update from "lodash/fp/update";
 import {
@@ -21,7 +21,9 @@ import type { DataRow } from "./types";
 import styles from "./eTable.module.scss";
 
 function ETable() {
+  const tableRef = useRef<HTMLDivElement>(null);
   const [columnLast, setColumn] = useState<number>(FIRST_COLUMN);
+
   const [data, setData] = useState<ReadonlyArray<Row<DataRow>>>([
     new Row({ index: 0 }),
   ]);
@@ -45,8 +47,8 @@ function ETable() {
   );
 
   const { handleKeydown, setActive, active, isActive, mode } = useKeyControl(
-    [data.length - FIRST_ROW, columnLast - FIRST_COLUMN],
-    updateData
+    tableRef,
+    [data.length - FIRST_ROW, columnLast - FIRST_COLUMN]
   );
 
   const currentValue = useMemo<string | undefined | number>(
@@ -108,6 +110,7 @@ function ETable() {
       />
       <div
         tabIndex={1}
+        ref={tableRef}
         className={styles.table}
         onKeyDownCapture={handleKeydown}
       >

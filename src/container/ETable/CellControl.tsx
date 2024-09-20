@@ -17,6 +17,7 @@ export const CellControl: FC<Props> = ({ isActive, children, onChange }) => {
       value={children}
       title="table cell"
       onChange={onChange}
+      className="table-cell__input"
     />
   ) : (
     children

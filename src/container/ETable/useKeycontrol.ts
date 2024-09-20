@@ -1,4 +1,4 @@
-import { useState, useCallback, KeyboardEventHandler } from "react";
+import { useState, useCallback, KeyboardEventHandler, RefObject } from "react";
 import { KeyName } from "@/lib/constants";
 
 type Dimension = [number, number];
@@ -6,15 +6,16 @@ export enum KeyControlMode {
   normal = "normal",
   edit = "edit",
 }
+export type UpdateHandler = (address: Dimension, value: string) => void;
 
 /**
  *
  * @param max type Dimension [row, col]
  * @returns
  */
-export const useKeyControl = (
-  [maxRow, maxColumn]: Dimension,
-  updateData: (address: Dimension, value: string) => void
+export const useKeyControl = <T extends { focus: () => void }>(
+  tableRef: RefObject<T>,
+  [maxRow, maxColumn]: Dimension
 ) => {
   const [active, setActive] = useState<Dimension>([0, 0]);
   const [mode, setMode] = useState<KeyControlMode>(KeyControlMode.normal);
@@ -48,7 +49,6 @@ export const useKeyControl = (
             // TODO: Remove prev char
             break;
           default:
-            updateData(active, event.key);
             setMode(KeyControlMode.edit);
             break;
         }
@@ -57,11 +57,12 @@ export const useKeyControl = (
           case KeyName.Enter:
             setMode(KeyControlMode.normal);
             goDown();
+            if (tableRef.current) tableRef.current.focus();
             break;
         }
       }
     },
-    [active, goDown, maxColumn, mode, updateData]
+    [goDown, maxColumn, mode, tableRef]
   );
 
   const setActiveHandler = useCallback<(a: Dimension) => void>((a) => {
