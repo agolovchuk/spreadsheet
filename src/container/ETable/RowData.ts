@@ -45,7 +45,6 @@ export class Row<T extends RowData> implements Comparable<Row<T>> {
   }
 
   set(key: keyof T, value: T[keyof T]): this {
-    console.log(key, value);
     this.row[key] = value;
     this.hash = calculateHash(this.row);
     return this;

@@ -2,7 +2,7 @@ import { useState, useCallback, KeyboardEventHandler } from "react";
 import { KeyName } from "@/lib/constants";
 
 type Dimension = [number, number];
-enum KeyControlMode {
+export enum KeyControlMode {
   normal = "normal",
   edit = "edit",
 }
@@ -26,8 +26,8 @@ export const useKeyControl = (
 
   const handleKeydown = useCallback<KeyboardEventHandler<HTMLDivElement>>(
     (event) => {
-      event.preventDefault();
       if (KeyControlMode.normal === mode) {
+        // event.preventDefault();
         switch (event.code) {
           case KeyName.ArrowDown:
             goDown();
@@ -55,7 +55,7 @@ export const useKeyControl = (
       } else if (KeyControlMode.edit === mode) {
         switch (event.code) {
           case KeyName.Enter:
-            // case KeyName.Esc
+            setMode(KeyControlMode.normal);
             goDown();
             break;
         }

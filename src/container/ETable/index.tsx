@@ -9,11 +9,12 @@ import {
   createRange,
   CreateRow,
 } from "@/components";
-import { useKeyControl } from "./useKeycontrol";
+import { useKeyControl, KeyControlMode } from "./useKeycontrol";
 import { FIRST_COLUMN, FIRST_ROW } from "./constants";
 import { columnFactory, createColumnName, getCellName } from "./helpers";
 import { RowItem } from "./RowItem";
 import { Row } from "./RowData";
+import { CellControl } from "./CellControl";
 import Cell from "./Cell";
 
 import type { DataRow } from "./types";
@@ -43,7 +44,7 @@ function ETable() {
     []
   );
 
-  const { handleKeydown, setActive, active, isActive } = useKeyControl(
+  const { handleKeydown, setActive, active, isActive, mode } = useKeyControl(
     [data.length - FIRST_ROW, columnLast - FIRST_COLUMN],
     updateData
   );
@@ -56,10 +57,15 @@ function ETable() {
   const getElement = useCallback(
     (data: Row<DataRow>, d: [number, number]) => (
       <Cell key={d[1]} isActive={isActive(d)} onSelect={() => setActive(d)}>
-        {data.get(d[1])}
+        <CellControl
+          onChange={(event) => updateData(active, event.target.value)}
+          isActive={isActive(d) && mode === KeyControlMode.edit}
+        >
+          {data.get(d[1])}
+        </CellControl>
       </Cell>
     ),
-    [isActive, setActive]
+    [active, isActive, mode, setActive, updateData]
   );
 
   const columns = useMemo<TableColumn<Row<DataRow>>[]>(

@@ -7,7 +7,7 @@ interface Props {
   children?: ReactNode;
 }
 
-const Cell: FC<Props> = ({ onSelect, isActive, children }) => {
+export const Cell: FC<Props> = ({ onSelect, isActive, children }) => {
   return (
     <td
       className={cn("table-body__cell", {
