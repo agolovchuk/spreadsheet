@@ -43,10 +43,10 @@ export const useKeyControl = <T extends { focus: () => void }>(
             setActive((a) => a && [Math.max(a[0] - 1, 0), a[1]]);
             break;
           case KeyName.Enter:
-            // TODO: Change status to edit cell
+            setMode(KeyControlMode.edit);
             break;
           case KeyName.Backspace:
-            // TODO: Remove prev char
+            // TODO: Remove cell value
             break;
           default:
             setMode(KeyControlMode.edit);

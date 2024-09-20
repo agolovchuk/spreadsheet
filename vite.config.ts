@@ -13,5 +13,8 @@ export default defineConfig({
     },
   },
   base: "/spreadsheet/",
+  build: {
+    manifest: true,
+  },
   plugins: [react()],
 });

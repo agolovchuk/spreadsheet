@@ -1,4 +1,5 @@
-import { FC, ChangeEventHandler, useCallback } from "react";
+import { FC, ChangeEventHandler, useCallback, useMemo } from "react";
+import { calculate } from "@/lib";
 
 interface Props {
   isActive: boolean;
@@ -11,6 +12,13 @@ export const CellControl: FC<Props> = ({ isActive, children, onChange }) => {
     if (el) el.focus();
   }, []);
 
+  const result = useMemo(() => {
+    if (typeof children === "string" && children.charCodeAt(0) === 61) {
+      return calculate(children);
+    }
+    return children;
+  }, [children]);
+
   return isActive ? (
     <input
       ref={refProxy}
@@ -20,7 +28,7 @@ export const CellControl: FC<Props> = ({ isActive, children, onChange }) => {
       className="table-cell__input"
     />
   ) : (
-    children
+    <div className="table-cell__result">{result}</div>
   );
 };
 

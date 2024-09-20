@@ -1,6 +1,6 @@
 import { FC, useCallback, ChangeEventHandler, useMemo } from "react";
 import cn from "classnames";
-import { calculate } from "../../lib";
+import { calculate } from "@/lib";
 import "./input-line.scss";
 
 interface Props {
