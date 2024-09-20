@@ -17,6 +17,6 @@ export function columnFactory<T>(getElement: GetElement<T>) {
 
 export function getCellName(address?: [number, number]): string {
   if (typeof address === "undefined") return "";
-  const [column, row] = address;
+  const [row, column] = address;
   return [createColumnName(FIRST_COLUMN + column), FIRST_ROW + row].join("");
 }
